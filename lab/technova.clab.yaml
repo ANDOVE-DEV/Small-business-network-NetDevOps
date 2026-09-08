@@ -1,0 +1,66 @@
+name: technova-network
+
+topology:
+  nodes:
+    # ROUTER (Il cervello L3 della rete)
+    router:
+      kind: linux
+      image: frrouting/frr:v8.4.1
+      binds:
+        - ../configs/router/daemons:/etc/frr/daemons
+        - ../configs/router/frr.conf:/etc/frr/frr.conf
+      exec:
+        - chown -R frr:frr /etc/frr
+        - sysctl -w net.ipv4.ip_forward=1
+
+    # SWITCH L2 (Semplici domini di broadcast nativi)
+    switch1:
+      kind: bridge
+
+    switch2:
+      kind: bridge
+
+    # ACCESS POINT
+    ap1:
+      kind: linux
+      image: alpine:3.18
+
+    # CLIENT (Configurazione IP automatizzata via IaC!)
+    client-hr:
+      kind: linux
+      image: alpine:3.18
+      exec:
+        - ip addr add 10.10.10.10/24 dev eth1
+        - ip link set eth1 up
+        - ip route replace default via 10.10.10.1
+
+    client-sales:
+      kind: linux
+      image: alpine:3.18
+      exec:
+        - ip addr add 10.10.20.10/24 dev eth1
+        - ip link set eth1 up
+        - ip route replace default via 10.10.20.1
+
+    client-guest:
+      kind: linux
+      image: alpine:3.18
+      exec:
+        - ip addr add 10.10.20.20/24 dev eth1
+        - ip link set eth1 up
+        - ip route replace default via 10.10.20.1
+
+  links:
+    # Switch 1: Router + HR + Sales + Trunk verso Switch2
+    - endpoints: ["router:eth1", "switch1:s1p1"]
+    - endpoints: ["client-hr:eth1", "switch1:s1p2"]
+    - endpoints: ["client-sales:eth1", "switch1:s1p3"]
+    - endpoints: ["switch1:s1p4", "switch2:s2p4"]  # Trunk L2 tra i due switch
+
+    # Switch 2: Router + Guest + Trunk verso Switch1
+    - endpoints: ["router:eth2", "switch2:s2p1"]
+    - endpoints: ["client-guest:eth1", "switch2:s2p2"]
+
+    # Access Point (collegato direttamente al router)
+    - endpoints: ["router:eth3", "ap1:eth1"]
+
