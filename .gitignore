@@ -1,0 +1,20 @@
+# Containerlab runtime files
+.clab/
+*.tar
+*.qcow2
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+*.swo
+*~
+
+# Secrets (NEVER commit these)
+*.pem
+*.key
+id_rsa
+*.env
