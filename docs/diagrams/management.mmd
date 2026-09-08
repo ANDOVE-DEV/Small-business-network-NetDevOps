@@ -1,0 +1,7 @@
+flowchart TD
+  BR["clab mgmt bridge br-3c6e5ba06571<br/>network 'clab' 172.20.20.0/24 gw 172.20.20.1<br/>IPv6 3fff:172:20:20::/64"]
+  BR --- R["router 172.20.20.2"]
+  BR --- SALES["client-sales 172.20.20.3"]
+  BR --- AP["ap1 172.20.20.4"]
+  BR --- GUEST["client-guest 172.20.20.5"]
+  BR --- HR["client-hr 172.20.20.6"]

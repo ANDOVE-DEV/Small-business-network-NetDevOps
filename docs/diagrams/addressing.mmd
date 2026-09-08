@@ -1,0 +1,12 @@
+flowchart TD
+  R["router (FRR)<br/>router-id 10.10.99.1<br/>ip forwarding: on"]
+  S10["10.10.10.0/24<br/>HR + Sales"]
+  S20["10.10.20.0/24<br/>Guest"]
+  S40["10.10.40.0/24<br/>WiFi / AP"]
+  R ---|"eth1 = 10.10.10.1"| S10
+  R ---|"eth2 = 10.10.20.1"| S20
+  R ---|"eth3 = 10.10.40.1"| S40
+  S10 --- HR["client-hr 10.10.10.10<br/>gw 10.10.10.1"]
+  S10 --- SALES["client-sales 10.10.10.20<br/>gw 10.10.10.1"]
+  S20 --- GUEST["client-guest 10.10.20.20<br/>gw 10.10.20.1"]
+  S40 --- AP["ap1<br/>no IP configured"]

@@ -1,0 +1,19 @@
+flowchart LR
+  R["router<br/>FRR v8.4.1 (technova-router)<br/>OSPF router-id 10.10.99.1"]
+  AP["ap1<br/>alpine:3.18<br/>no data-plane IP"]
+
+  subgraph L2["Single L2 broadcast domain (switch1 + switch2 bridged)"]
+    SW1(["switch1<br/>kind: bridge"])
+    SW2(["switch2<br/>kind: bridge"])
+    HR["client-hr<br/>10.10.10.10/24"]
+    SALES["client-sales<br/>10.10.10.20/24"]
+    GUEST["client-guest<br/>10.10.20.20/24"]
+    SW1 ---|"s1p4 - s2p4"| SW2
+    HR ---|"eth1 - s1p2"| SW1
+    SALES ---|"eth1 - s1p3"| SW1
+    GUEST ---|"eth1 - s2p2"| SW2
+  end
+
+  R ---|"eth1 - s1p1"| SW1
+  R ---|"eth2 - s2p1"| SW2
+  R ---|"eth3 - eth1 (p2p)"| AP
